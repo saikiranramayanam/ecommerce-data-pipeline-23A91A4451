@@ -49,7 +49,7 @@ jobs:
         DB_NAME: ecommercedb
         DB_USER: admin
         DB_PASSWORD: password
-        PGPASSWORD: password  # ← FIXED: Added for psql auth
+        PGPASSWORD: password
       run: |
         cat > create_schemas.sql << EOF
         CREATE SCHEMA IF NOT EXISTS staging;
@@ -58,6 +58,28 @@ jobs:
         EOF
         psql -h localhost -U admin -d ecommercedb -f create_schemas.sql
     
+    - name: Run full pipeline
+      env:
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_NAME: ecommercedb
+        DB_USER: admin
+        DB_PASSWORD: password
+        PGPASSWORD: password
+      run: |
+        python scripts/pipeline/orchestrator.py
+    
+    - name: Run quality checks
+      env:
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_NAME: ecommercedb
+        DB_USER: admin
+        DB_PASSWORD: password
+        PGPASSWORD: password
+      run: |
+        python scripts/qualitychecks/validate_data.py
+    
     - name: Run tests with coverage
       env:
         DB_HOST: localhost
@@ -65,7 +87,7 @@ jobs:
         DB_NAME: ecommercedb
         DB_USER: admin
         DB_PASSWORD: password
-        PGPASSWORD: password  # ← FIXED: Added for pytest/psql auth
+        PGPASSWORD: password
       run: |
         pytest tests/ -v --cov=scripts --cov-report=xml --cov-report=html \
           --cov-report=term-missing || exit 1
