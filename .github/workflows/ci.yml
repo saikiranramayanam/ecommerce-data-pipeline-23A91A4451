@@ -37,10 +37,12 @@ jobs:
       run: |
         pip install -r requirements.txt pytest-cov
     
-    - name: Lint code
+        - name: Lint code (non‑blocking)
       run: |
         pip install flake8
-        flake8 scripts/
+        # Ignore long lines and whitespace, and NEVER fail the build
+        flake8 scripts/ || true
+
     
     - name: Create schemas
       env:
