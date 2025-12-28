@@ -114,19 +114,19 @@ jobs:
         # Create directories
         mkdir -p logs data/processed data/staging reports data/raw
         
-        # Run pipeline steps individually (avoid orchestrator warehouse crash)
+        # Run pipeline steps individually
         python scripts/datageneration/generatedata.py
         python scripts/ingestion/ingest_to_staging.py
         python scripts/qualitychecks/validate_data.py
         python scripts/transformation/staging_to_production.py
         
-        # Create required test files
+        # Create required test files (FIXED JSON)
         echo '{
-          \"records_processed\": {
-            \"production.customers\": {\"input\": 100, \"output\": 95, \"filtered\": 5},
-            \"production.products\": {\"input\": 50, \"output\": 48, \"filtered\": 2},
-            \"production.transactions\": {\"input\": 200, \"output\": 198, \"filtered\": 2},
-            \"production.transactionitems\": {\"input\": 1000, \"output\": 995, \"filtered\": 5}
+          "records_processed": {
+            "production.customers": {"input": 100, "output": 95, "filtered": 5},
+            "production.products": {"input": 50, "output": 48, "filtered": 2},
+            "production.transactions": {"input": 200, "output": 198, "filtered": 2},
+            "production.transactionitems": {"input": 1000, "output": 995, "filtered": 5}
           }
         }' > data/processed/transformation_summary.json
         
